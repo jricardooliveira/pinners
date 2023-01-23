@@ -35,24 +35,26 @@ func HelloServer(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	/*
-
-		fmt.Println("Ping")
-		client.Ping(ctx)
-		fmt.Println("Pong")
-
-		val2, err := client.Get(ctx, "key2").Result()
-
-		if err == redis.Nil {
-			fmt.Println("key2 does not exist")
-		} else if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println("key2", val2)
-		}
-
-	*/
+	defer client.Close()
 
 	fmt.Fprintf(w, "Hello Shit, %s!", r.URL.Path[1:])
 
 }
+
+/*
+
+	fmt.Println("Ping")
+	client.Ping(ctx)
+	fmt.Println("Pong")
+
+	val2, err := client.Get(ctx, "key2").Result()
+
+	if err == redis.Nil {
+		fmt.Println("key2 does not exist")
+	} else if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("key2", val2)
+	}
+
+*/
