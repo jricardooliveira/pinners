@@ -9,14 +9,12 @@ import (
 	"time"
 )
 
-func main() {
-	http.HandleFunc("/", HelloServer)
-	http.ListenAndServe(":8080", nil)
+type wrapperStruct struct {
+	client redis.Client
 }
 
-var ctx = context.Background()
+func main() {
 
-func HelloServer(w http.ResponseWriter, r *http.Request) {
 	client := redis.NewClient(&redis.Options{
 		Addr: "redis-10835.c55.eu-central-1-1.ec2.cloud.redislabs.com:10835",
 		//Addr: "localhost:6379",
@@ -27,18 +25,23 @@ func HelloServer(w http.ResponseWriter, r *http.Request) {
 
 	defer client.Close()
 
-	a := time.Now()
-	fmt.Println(a)
+	handlers := wrapperStruct{client: *client}
+	http.HandleFunc("/", handlers.HelloServer)
+	http.ListenAndServe(":8080", nil)
+}
 
+func (ws wrapperStruct) HelloServer(w http.ResponseWriter, r *http.Request) {
+	var ctx = context.Background()
+
+	a := time.Now()
 	id := uuid.New().String()
 
-	err := client.Set(ctx, id, a, 0).Err()
+	err := ws.client.Set(ctx, id, a, 0).Err()
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Fprintf(w, "Hello Shit, %s!", r.URL.Path[1:])
-
 }
 
 /*
