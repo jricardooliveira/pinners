@@ -25,6 +25,8 @@ func HelloServer(w http.ResponseWriter, r *http.Request) {
 		DB:       0,
 	})
 
+	defer client.Close()
+
 	a := time.Now()
 	fmt.Println(a)
 
@@ -34,8 +36,6 @@ func HelloServer(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-
-	defer client.Close()
 
 	fmt.Fprintf(w, "Hello Shit, %s!", r.URL.Path[1:])
 
